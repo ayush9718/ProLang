@@ -1,14 +1,14 @@
 const { contactUsEmail } = require("../mail/contactFormRes")
-const mailSender = require("../utility/mailSender")
+const {mailSender} = require("../utility/mailSender")
 
 exports.contactUsController = async (req, res) => {
-  const { email, firstname, lastname, message } = req.body
+  const { email, firstName, lastName, message } = req.body
 
   try {
     const emailRes = await mailSender(
       email,
       "Your Data send successfully",
-      contactUsEmail(email, firstname, lastname, message)
+      contactUsEmail(email, firstName, lastName, message)
     )
     return res.json({
       success: true,

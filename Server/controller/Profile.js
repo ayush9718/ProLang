@@ -1,28 +1,20 @@
 const Profile = require("../modules/Profile");
-const imageUploader = require("../utility/imageUploader");
+const {imageUploader} = require("../utility/imageUploader");
 
 exports.ProfileUpdater = async (req,res) =>{
     try {
 		const {firstName,lastName,language,} = req.body;
-        const image = req.files.pfp;
-		const id = req.user.id;
+		const id = req.user._id;
 
 		const userDetails = await Profile.findById(id);
 
         userDetails.firstName = firstName || userDetails.firstName;
 		userDetails.lastName = lastName || userDetails.lastName;
 		userDetails.language = language || userDetails.language;
-
-        if(image){
-            const uploadDetails = await imageUploader(
-                image,
-                process.env.FOLDER_NAME,
-            );
-            userDetails.image = await uploadDetails.secure_url;
-        }
+		console.log("user details recieved");
 
 		 await userDetails.save();
-
+		console.log("user details saved");
 		return res.json({
 			success: true,
 			data:userDetails,
@@ -34,6 +26,32 @@ exports.ProfileUpdater = async (req,res) =>{
 		return res.status(500).json({
 			success: false,
             message:"error occur while updating profile",
+		});
+	}
+}
+
+exports.imageUpdater = async (req,res) =>{
+	try {
+		const image = req.files.pfp;
+		const id = req.user._id;
+		const uploadDetails = await imageUploader(
+			image,
+			process.env.FOLDER_NAME,
+		);
+		const userDetails = await Profile.findById(id);
+		userDetails.image = uploadDetails.secure_url;
+		await userDetails.save();
+		return res.json({
+			success: true,
+			data:userDetails,
+			message: "Profile updated successfully",
+		});
+	} 
+	catch (err) {
+		console.log(err);
+		return res.status(500).json({
+			success: false,
+			message:"error occur while updating profile",
 		});
 	}
 }

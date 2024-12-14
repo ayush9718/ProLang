@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-const mailSender = async(email,title,body) =>{
+exports.mailSender = async (email,title,body) =>{
     try{
         let transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
@@ -11,19 +11,19 @@ const mailSender = async(email,title,body) =>{
                 pass: process.env.MAIL_PASS
             }
         });
-
+        console.log("transporter created",transporter);
         let info = await transporter.sendMail({
             from:`ProLang ${process.env.MAIL_USER}`,
-            to:'${email}',
+            to:`${email}`,
             subject:`${title}`,
-            html:`${body}`
+            html: body
         });
         console.log("message sent successfully",info);
         return info;
     }
     catch(err){
-        console.log("error in sending mail",err);
-        return error;
+        console.log("error in sending mail",err.message);
+        return err;
     }
 
 }

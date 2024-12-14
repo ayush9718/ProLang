@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 require("dotenv").config();
 
-const dbConnect = () => {
+exports.dbConnect = () => {
     mongoose.connect(process.env.MONGO_URL).then(
         () => {
             console.log("db connection successfull");
